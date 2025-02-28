@@ -17,7 +17,7 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Custom CSS for UI Enhancements
 st.markdown("""
-             <style>
+    <style>
         /* Full page light purple background */
         .stApp {
             background-color: #E6E6FA; /* Light purple */
@@ -25,15 +25,15 @@ st.markdown("""
             width: 100vw;
             padding: 20px;
         }
-        
+
         /* Centered bold heading */
         .main-title {
             font-size: 40px;
             font-weight: bold;
-            color: #301934 !important;  /* Dark text */
+            color: #301934 !important;
             text-align: center;
             margin-bottom: 10px;
-            padding-top: 10px;  /* Remove extra top space */
+            padding-top: 10px;
             position: relative;
         }
 
@@ -41,9 +41,9 @@ st.markdown("""
         .main-title::after {
             content: "";
             display: block;
-            width: 120px; /* Longer line */
-            height: 2px; /* Thinner line */
-            background-color: white; /* Thin white line */
+            width: 120px;
+            height: 2px;
+            background-color: white;
             margin: 8px auto;
         }
 
@@ -51,7 +51,7 @@ st.markdown("""
         .subheader {
             font-size: 20px;
             font-weight: 600;
-            color: #1E1E1E !important; /* Force darker text */
+            color: #1E1E1E !important;
             text-align: center;
         }
 
@@ -77,26 +77,22 @@ st.markdown("""
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #E6E6FA; /* Same as page background */
+            background: #E6E6FA;
             padding: 10px;
         }
     </style>
-
 """, unsafe_allow_html=True)
 
 # Function to interact with Gemini API
-def get_gemini_response(input, pdf_content, prompt):
+def get_gemini_response(input_text, pdf_content, prompt):
     model = genai.GenerativeModel('gemini-1.5-flash')  # Updated model
-    response = model.generate_content([input, pdf_content[0], prompt])
+    response = model.generate_content([input_text, pdf_content[0], prompt])
     return response.text
 
-
-
-
-# Set Poppler path manually
+# Function to process uploaded PDF
 def input_pdf_setup(uploaded_file):
     if uploaded_file is not None:
-        images = pdf2image.convert_from_bytes(uploaded_file.read())  # Remove poppler_path
+        images = pdf2image.convert_from_bytes(uploaded_file.read())  # ✅ Fixed poppler issue
         first_page = images[0]
 
         # Convert to bytes
@@ -112,10 +108,9 @@ def input_pdf_setup(uploaded_file):
         ]
         return pdf_parts
     else:
-        **raise FileNotFoundError("No file uploaded")**  # ✅ Fixed Error
+        raise FileNotFoundError("No file uploaded")  # ✅ Fixed Syntax Error
 
 # Page Layout
-
 st.markdown("<h1 class='main-title'>ATS Checker</h1>", unsafe_allow_html=True)
 
 # Main Content Container
@@ -133,19 +128,19 @@ with st.container():
         uploaded_file = st.file_uploader("Upload PDF Resume", type=["pdf"])
 
         if uploaded_file:
-            st.success(f"✅ Resume Uploaded: **{uploaded_file.name}**")  # Display file name
+            st.success(f"✅ Resume Uploaded: **{uploaded_file.name}**")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
 # Buttons
-st.markdown("<br>", unsafe_allow_html=True)  # Add spacing
+st.markdown("<br>", unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 
 with col1:
     submit1 = st.button("📄 Analyze Resume")
 
 with col2:
-    submit3 = st.button(" Check Percentage Match")
+    submit3 = st.button("🔍 Check Percentage Match")
 
 # AI Prompt Templates
 input_prompt1 = """
@@ -166,7 +161,7 @@ with st.container():
     if submit1:
         if uploaded_file:
             pdf_content = input_pdf_setup(uploaded_file)
-            response = get_gemini_response(input_prompt1, pdf_content, input_text)
+            response = get_gemini_response(input_text, pdf_content, input_prompt1)  # ✅ Fixed function call
             st.markdown("<h2 class='subheader'>📄 Resume Evaluation:</h2>", unsafe_allow_html=True)
             st.success(response)
         else:
@@ -175,11 +170,11 @@ with st.container():
     elif submit3:
         if uploaded_file:
             pdf_content = input_pdf_setup(uploaded_file)
-            response = get_gemini_response(input_prompt3, pdf_content, input_text)
+            response = get_gemini_response(input_text, pdf_content, input_prompt3)  # ✅ Fixed function call
             st.markdown("<h2 class='subheader'>🔍 Percentage Match & Feedback:</h2>", unsafe_allow_html=True)
             st.info(response)
         else:
             st.warning(" Please upload a resume.")
 
 # Footer with Creator Name
-st.markdown("<p class='footer'>Made by Abhishek Saha </p>", unsafe_allow_html=True)
+st.markdown("<p class='footer'>Made by Abhishek Saha 🚀</p>", unsafe_allow_html=True)
