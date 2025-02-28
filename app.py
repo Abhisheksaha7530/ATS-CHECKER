@@ -94,7 +94,6 @@ def get_gemini_response(input, pdf_content, prompt):
 
 
 # Set Poppler path manually
-POPPLER_PATH = "/usr/bin/poppler"  # Change this if necessary
 def input_pdf_setup(uploaded_file):
     if uploaded_file is not None:
         images = pdf2image.convert_from_bytes(uploaded_file.read())  # Remove poppler_path
@@ -113,8 +112,7 @@ def input_pdf_setup(uploaded_file):
         ]
         return pdf_parts
     else:
-        raise FileNotFoundError("No file uploaded")
-or("No file uploaded")
+        **raise FileNotFoundError("No file uploaded")**  # ✅ Fixed Error
 
 # Page Layout
 
